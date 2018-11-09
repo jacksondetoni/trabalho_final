@@ -1,0 +1,66 @@
+---
+title: "Trabalho Final"
+author: "Jackson e Milena"
+date: "9 de novembro de 2018"
+output: ioslides_presentation
+---
+## Slide 1
+
+```{r, warning=FALSE, message=FALSE}
+# carregamento dos dados
+
+library(dplyr)
+library(ggplot2)
+dados<-read.table("E:\\D6 - Coleta e Analise de Dados Secundarios\\Trabalho Final\\Jackson_dados.txt",head= TRUE, sep=";")
+
+#identificação das estruturas das variáveis
+
+str(dados)
+
+```
+
+## Slide 2
+
+```{r, warning=FALSE, message=FALSE}
+# criação de uma coluna de saldo comercial exportações - importações
+dados <- dados %>%
+  mutate(saldo = Vlr_export - Vlr_import)
+head(dados)
+```
+
+## Slide 3
+
+```{r,warning=FALSE, message=FALSE}
+
+# identificar os seis maiores saldo de exportação em 2017
+dados_2017 <-  dados %>%
+  filter(Ano==2017) %>%
+  arrange(desc(saldo))
+grafico_saldo_ano <- dados %>%
+  group_by(Ano) %>%
+  summarise(saldo_comercial = sum (saldo))
+```
+
+
+## Slide 4
+
+```{r, warning=FALSE, message=FALSE}
+ggplot(aes(x=Ano, y=saldo_comercial/1000000), data=grafico_saldo_ano) + geom_line(colour="red", size = 2) + 
+  scale_x_continuous(breaks=2007:2017, labels = as.character (2007:2017)) +
+  labs (title="Saldo Comercial anual, em US$ milhões", y="Saldo Comercial") + theme_minimal()
+```
+
+
+## Slide 5
+
+```{r}
+grafico_maioressaldos2017 <- dados_2017 [1:5, ]
+```
+
+## Slide 6
+
+```{r}
+ggplot(data=grafico_maioressaldos2017, aes(x=Desc_Cnae, y=saldo/1000000, fill=Desc_Cnae)) + geom_bar (stat="identity") +
+  theme(axis.text.x = element_blank()) + labs (title="Maiores Saldos Comercias em 2017, em US$ milhões", x="", fill="CNAE", y="Saldo")
+```
+
